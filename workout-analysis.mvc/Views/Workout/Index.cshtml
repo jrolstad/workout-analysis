@@ -54,3 +54,19 @@
 }
 
 @Html.Partial("workoutList",Model.Workouts)
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // create DatePicker from input HTML element
+            $("#SearchRequest_StartedAfter").kendoDatePicker();
+            $("#workoutList").kendoGrid({
+                height: 550,
+                sortable: true,
+                filterable:true
+            });
+        });
+    </script>
+
+}
