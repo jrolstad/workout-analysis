@@ -17,6 +17,8 @@ namespace workout_analysis.mvc.Controllers
         {
             var client = new WorkoutClient();
 
+            requestingModel.SearchRequest = requestingModel.SearchRequest ?? new WorkoutSearchRequest();
+
             var request = new WorkoutApiRequest();
 
             if (requestingModel.SearchRequest != null && !string.IsNullOrWhiteSpace(requestingModel.SearchRequest.StartedAfter))
@@ -40,7 +42,9 @@ namespace workout_analysis.mvc.Controllers
             }
 
             var workouts = new List<Workout>();
-            if (request.ApiKey != null && request.AccessToken != null)
+            if (!string.IsNullOrWhiteSpace(requestingModel.ApiKey) 
+                && !string.IsNullOrWhiteSpace(requestingModel.AccessToken) 
+                && !string.IsNullOrWhiteSpace(requestingModel.SearchRequest.UserId))
             {
                 workouts = client.Get(request);
             }
