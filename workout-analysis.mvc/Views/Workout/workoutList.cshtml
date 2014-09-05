@@ -44,12 +44,12 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDateTime)
+                @item.StartDateTime.ToLocalTime()
             </td>
             <td>
                 @{
-                    var url = string.Format("http://www.mapmyrun.com/workout/{0}", item.Id);
-                    <a href="@url" target="new">@item.Name</a>
+                    var workoutUrl = string.Format("http://www.mapmyrun.com/workout/{0}", item.Id);
+                    <a href="@workoutUrl" target="new">@(item.Name ?? item.Id.ToString())</a>
                 }
 
             </td>
@@ -72,13 +72,19 @@
                 @Html.DisplayFor(modelItem => item.ElapsedTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Route)
+                @{
+                    var routeUrl = string.Format("http://www.mapmyrun.com/routes/view/{0}", item.Route);
+                    <a href="@routeUrl" target="new">@item.Route</a>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ActivityType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User)
+                @{
+                    var userUrl = string.Format("http://www.mapmyrun.com/profile/{0}", item.User);
+                    <a href="@userUrl" target="new">@item.User</a>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserGear)
