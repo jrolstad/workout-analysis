@@ -1,0 +1,3 @@
+[submodule "mapmyfitnessapi_net"]
+	path = mapmyfitnessapi_net
+	url = https://github.com/jrolstad/mapmyfitnessapi_net.git
