@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using mapmyfitnessapi_sdk.models;
 using mapmyfitnessapi_sdk.services;
 using mapmyfitnessapi_sdk.workouts;
 using workout_analysis.mvc.Models;
@@ -12,36 +13,46 @@ namespace workout_analysis.mvc.Controllers
     public class WorkoutController : Controller
     {
         // GET: Workout
-        public ActionResult Index(WorkoutSearchRequest searchParameters)
+        public ActionResult Index(WorkoutIndexViewModel requestingModel)
         {
             var client = new WorkoutClient();
 
             var request = new WorkoutApiRequest();
-            request.WithUserId(502434);
 
-            if (searchParameters != null && !string.IsNullOrWhiteSpace(searchParameters.StartedAfter))
+            if (requestingModel.SearchRequest != null && !string.IsNullOrWhiteSpace(requestingModel.SearchRequest.StartedAfter))
             {
-                request.WithStartedAfter(DateTime.Parse(searchParameters.StartedAfter));
+                request.WithStartedAfter(DateTime.Parse(requestingModel.SearchRequest.StartedAfter));
             }
 
-            if (searchParameters != null && !string.IsNullOrWhiteSpace(searchParameters.ApiKey))
+            if (requestingModel.SearchRequest != null && !string.IsNullOrWhiteSpace(requestingModel.SearchRequest.UserId))
             {
-                request.WithApiKey(searchParameters.ApiKey);
+                request.WithUserId(int.Parse(requestingModel.SearchRequest.UserId));
             }
 
-            if (searchParameters != null && !string.IsNullOrWhiteSpace(searchParameters.AccessToken))
+            if (!string.IsNullOrWhiteSpace(requestingModel.ApiKey))
             {
-                request.WithAccessToken(searchParameters.AccessToken);
+                request.WithApiKey(requestingModel.ApiKey);
             }
 
-            request
-                .WithApiKey("z8w3jv4y9b2nhq5qjgzb9pmpt4pwg9mc")
-                .WithAccessToken("0834ab313a742d2e5028a6b28351fa0673d852f5")
-                ;
-            var workouts = client.Get(request);
-            var sortedWorkouts = workouts.OrderByDescending(w => w.UpdatedDateTime);
+            if (!string.IsNullOrWhiteSpace(requestingModel.AccessToken))
+            {
+                request.WithAccessToken(requestingModel.AccessToken);
+            }
 
-            return View(sortedWorkouts);
+            var workouts = new List<Workout>();
+            if (request.ApiKey != null && request.AccessToken != null)
+            {
+                workouts = client.Get(request);
+            }
+
+            var indexViewModel = new WorkoutIndexViewModel
+            {
+                AccessToken = requestingModel.AccessToken,
+                ApiKey = requestingModel.ApiKey,
+                SearchRequest = requestingModel.SearchRequest ?? new WorkoutSearchRequest(),
+                Workouts = workouts.OrderByDescending(w => w.UpdatedDateTime).ToList()
+            };
+            return View(indexViewModel);
         }
     }
 }
