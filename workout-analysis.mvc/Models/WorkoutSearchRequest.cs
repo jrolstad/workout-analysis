@@ -5,6 +5,8 @@
         public string StartedAfter { get; set; }
 
         public string UserId { get; set; }
+
+        public string SearchTerms { get; set; }
        
     }
 }
