@@ -18,3 +18,8 @@ textarea {
 
 .top-buffer { margin-top:5px; }
 .bottom-buffer { margin-bottom:5px; }
+.tooltip-inner {
+    white-space:pre-wrap;
+    max-width: none;
+    text-align: left;
+}
