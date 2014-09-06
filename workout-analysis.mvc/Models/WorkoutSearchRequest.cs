@@ -7,6 +7,8 @@
         public string UserId { get; set; }
 
         public string SearchTerms { get; set; }
+
+        public string SearchTermsHelp { get; set; }
        
     }
 }

@@ -18,7 +18,15 @@ namespace workout_analysis.mvc.Controllers
         {
             var client = new WorkoutClient();
 
-            SetRequestDefaults(requestingModel);
+            requestingModel.SearchRequest = requestingModel.SearchRequest ?? new WorkoutSearchRequest();
+
+            var searchTerms = requestingModel.SearchRequest.SearchTerms ?? "";
+            var arguments = searchTerms.Split(' ');
+            var options = new SearchTermOptions();
+            CommandLine.Parser.Default.ParseArgumentsStrict(arguments, options);
+
+            SetRequestDefaults(requestingModel,options);
+            requestingModel.SearchRequest.SearchTermsHelp = options.GetUsage();
 
             var request = CreateMapMyFitnessRequest(requestingModel);
 
@@ -34,15 +42,18 @@ namespace workout_analysis.mvc.Controllers
             {
                 AccessToken = requestingModel.AccessToken,
                 ApiKey = requestingModel.ApiKey,
-                SearchRequest = requestingModel.SearchRequest ?? new WorkoutSearchRequest(),
+                SearchRequest = requestingModel.SearchRequest,
                 Workouts = workouts.OrderByDescending(w => w.UpdatedDateTime).ToList()
             };
             return View(indexViewModel);
         }
 
-        private static void SetRequestDefaults(WorkoutIndexViewModel requestingModel)
+        private static void SetRequestDefaults(WorkoutIndexViewModel requestingModel, SearchTermOptions argumentsParsed)
         {
             requestingModel.SearchRequest = requestingModel.SearchRequest ?? new WorkoutSearchRequest();
+
+            requestingModel.SearchRequest.StartedAfter = argumentsParsed.StartedAfter;
+            requestingModel.SearchRequest.UserId = argumentsParsed.UserId;
 
             if (string.IsNullOrWhiteSpace(requestingModel.SearchRequest.StartedAfter))
                 requestingModel.SearchRequest.StartedAfter = DateTime.Now.AddMonths(-1).ToShortDateString();
